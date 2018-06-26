@@ -102,3 +102,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+*.bin
+*.dat
+*.jpeg
+*.jpg
+./ipynb_checkpoints/
+./checkpoints/
+.DS_Store
+./log/
