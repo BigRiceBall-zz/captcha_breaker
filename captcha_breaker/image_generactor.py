@@ -1,7 +1,7 @@
 
 from captcha.image import ImageCaptcha
 from captcha_breaker import setting
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import random
 from skimage.color import rgb2gray
