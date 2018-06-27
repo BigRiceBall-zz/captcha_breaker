@@ -6,7 +6,6 @@ import numpy as np
 import random
 from skimage.color import rgb2gray
 from skimage.transform import resize
-from skimage.transform import resize
 import numpy as np
 import skimage.io as io
 import cv2 
@@ -29,10 +28,18 @@ def _generate_type_1_model_image():
 def generate_type_1_captcha(model_image, text):
     image = model_image.copy()
     font = cv2.FONT_HERSHEY_SIMPLEX
-    image = cv2.putText(image, text, (35,28), font, 1, (0,0,0), 2, cv2.LINE_AA)
-    # plt.imshow(model_image)
+    # print(text)
+    p = np.random.randint(10, size=2) - 5
+    interval = np.random.randint(5, size=1) + 14
+    height = 37 + p[0]
+    for index, char in enumerate(text):
+        image = cv2.putText(image, char, (height + index*interval, 28 + p[1]), font, 1, (0,0,0), 2, cv2.LINE_AA)
+    # plt.imshow(image)
     # plt.show()
     return image
+
+# from captcha_breaker import image_generactor
+# image_generactor.generate_type_1_captcha(model_image, "XA8B")
 
 def generate_different_type(text, model_image, generator, nb_type=1):
     p = np.random.uniform(0,1)
