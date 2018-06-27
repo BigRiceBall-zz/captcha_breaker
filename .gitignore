@@ -110,3 +110,4 @@ venv.bak/
 ./checkpoints/
 .DS_Store
 ./log/
+!models.jpeg
