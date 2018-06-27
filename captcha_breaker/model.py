@@ -9,7 +9,7 @@ def simple():
     x = input_tensor
     for i in range(3):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            kernel_regularizer=regularizers.l2(0.01)))(x)
+            kernel_regularizer=regularizers.l2(0.01))(x)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             # )(x)
