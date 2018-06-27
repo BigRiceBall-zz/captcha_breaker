@@ -1,7 +1,7 @@
 
 from captcha.image import ImageCaptcha
 from captcha_breaker import setting
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import random
 from skimage.color import rgb2gray
@@ -63,6 +63,14 @@ def generate_different_type(text, model_image, generator, nb_type=3):
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
         _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
+        # plt.imshow(image, cmap="gray")
+        # plt.show()
+        return np.expand_dims(image, axis=2)
+    elif type_range[3] <= p and p < type_range[4]:
+        image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
+        pp = np.random.uniform(-0.005, 0.005)
+        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
+        image = cv2.bitwise_not(image)
         # plt.imshow(image, cmap="gray")
         # plt.show()
         return np.expand_dims(image, axis=2)

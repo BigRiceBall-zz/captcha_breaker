@@ -11,12 +11,12 @@ def simple():
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
             kernel_regularizer=regularizers.l2(0.01),
             bias_regularizer=regularizers.l2(0.01),
-            activity_regularizer=regularizers.l2(0.01),)(x)
+            activity_regularizer=regularizers.l2(0.01))(x)
         x = Dropout(0.5)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
             kernel_regularizer=regularizers.l2(0.01),
             bias_regularizer=regularizers.l2(0.01),
-            activity_regularizer=regularizers.l2(0.01),)(x)
+            activity_regularizer=regularizers.l2(0.01))(x)
         x = Dropout(0.5)(x)
         x = MaxPooling2D((2, 2))(x)
 
