@@ -15,7 +15,7 @@ def decode(y):
     y = np.argmax(np.array(y), axis=2)[:,0]
     return ''.join([setting.CHARACTERS[x] for x in y])
 
-def generator_4_multiple_types(batch_size=32, nb_type=1):
+def generator_4_multiple_types(batch_size=32, nb_type=3):
     X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
     y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
     generator = ImageCaptcha(width=170, height=80)
@@ -23,7 +23,7 @@ def generator_4_multiple_types(batch_size=32, nb_type=1):
     while True:
         for i in range(batch_size):
             random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
-            X[i] = generate_different_type(random_str, model_image, generator, 3)
+            X[i] = generate_different_type(random_str, model_image, generator, nb_type)
             # print(X[i])
             for j, ch in enumerate(random_str):
                 y[j][i, :] = 0
