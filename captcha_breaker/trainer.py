@@ -11,7 +11,7 @@ def train(batch_size=32, nb_type=3):
                 metrics=['accuracy'])
                 
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=10, nb_epoch=1,
+                        samples_per_epoch=10240, nb_epoch=5,
                         nb_worker=28,
                         validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
@@ -21,7 +21,7 @@ def continue_2_train(batch_size=32, nb_type=3):
     now = str(int(time.time()))
     model = load_model('models/model_1530090310.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=128, nb_epoch=32,
+                        samples_per_epoch=4096, nb_epoch=1,
                         nb_worker=28,
                         validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
@@ -71,10 +71,10 @@ def test2():
 
     model = load_model('models/model_1530071864.h5')
     model.get_layer('conv2d_1').kernel_regularizer = regularizers.l2(0.01) 
-    # model.get_layer('conv2d_1').bias_regularizer = regularizers.l2(0.01)
+    model.get_layer('conv2d_1').bias_regularizer = regularizers.l2(0.01)
     model.get_layer('conv2d_1').activity_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_2').kernel_regularizer = regularizers.l2(0.01) 
-    # model.get_layer('conv2d_2').bias_regularizer = regularizers.l2(0.01)
+    model.get_layer('conv2d_2').bias_regularizer = regularizers.l2(0.01)
     model.get_layer('conv2d_2').activity_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_3').kernel_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_3').bias_regularizer = regularizers.l2(0.01)

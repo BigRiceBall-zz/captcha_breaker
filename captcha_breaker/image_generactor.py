@@ -10,6 +10,7 @@ import numpy as np
 import skimage.io as io
 import cv2 
 import threading
+from skimage import util
 
 def decode(y):
     y = np.argmax(np.array(y), axis=2)[:,0]
@@ -35,6 +36,7 @@ def generate_type_1_captcha(model_image, text):
     for index, char in enumerate(text):
         image = cv2.putText(image, char, (height + index*interval, 28 + p[1]), font, 1, (0,0,0), 2, cv2.LINE_AA)
     # plt.imshow(image)
+    # print(image)
     # plt.show()
     return image
 
@@ -67,10 +69,12 @@ def generate_different_type(text, model_image, generator, nb_type=3):
         # plt.show()
         return np.expand_dims(image, axis=2)
     elif type_range[3] <= p and p < type_range[4]:
+        np.set_printoptions(threshold=np.nan)
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
-        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
-        image = cv2.bitwise_not(image)
+        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY)
+        image = util.invert(image)
+        # print(image)
         # plt.imshow(image, cmap="gray")
         # plt.show()
         return np.expand_dims(image, axis=2)
@@ -121,4 +125,4 @@ def generator_4_multiple_types(batch_size=32, nb_type=3):
             for j, ch in enumerate(random_str):
                 y[j][i, :] = 0
                 y[j][i, setting.CHARACTERS.find(ch)] = 1
-        yield X, y
+        # yield X, y
