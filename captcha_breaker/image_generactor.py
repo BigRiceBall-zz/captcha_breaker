@@ -29,8 +29,8 @@ def generate_type_1_captcha(model_image, text):
     image = model_image.copy()
     font = cv2.FONT_HERSHEY_SIMPLEX
     # print(text)
-    p = np.random.randint(10, size=2) - 5
-    interval = np.random.randint(5, size=1) + 14
+    p = np.random.randint(10, size=2) - 4
+    interval = np.random.randint(5, size=1) + 13
     height = 37 + p[0]
     for index, char in enumerate(text):
         image = cv2.putText(image, char, (height + index*interval, 28 + p[1]), font, 1, (0,0,0), 2, cv2.LINE_AA)
@@ -41,7 +41,7 @@ def generate_type_1_captcha(model_image, text):
 # from captcha_breaker import image_generactor
 # image_generactor.generate_type_1_captcha(model_image, "XA8B")
 
-def generate_different_type(text, model_image, generator, nb_type=1):
+def generate_different_type(text, model_image, generator, nb_type=3):
     p = np.random.uniform(0,1)
     type_range = np.linspace(0, 1, nb_type + 1, endpoint=True)
     if 0 <= p and p < type_range[1]:
