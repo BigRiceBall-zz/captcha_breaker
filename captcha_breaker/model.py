@@ -7,18 +7,21 @@ from keras import regularizers
 def simple():
     input_tensor = Input((setting.HEIGHT, setting.WIDTH, 1))
     x = input_tensor
+    x = noise.GaussianNoise(10)(x)
     for i in range(3):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
             kernel_regularizer=regularizers.l2(0.001)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
+        x = noise.GaussianNoise(10)(x)
         # x = Dropout(0.5)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
             kernel_regularizer=regularizers.l2(0.001)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
+        x = noise.GaussianNoise(10)(x)
         # x = Dropout(0.5)(x)
         x = MaxPooling2D((2, 2))(x)
 
