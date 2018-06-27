@@ -9,16 +9,16 @@ def simple():
     x = input_tensor
     for i in range(3):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            # kernel_regularizer=regularizers.l2(0.01),
+            kernel_regularizer=regularizers.l2(0.01)))(x)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
-            )(x)
+            # )(x)
         # x = Dropout(0.5)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            # kernel_regularizer=regularizers.l2(0.01),
+            kernel_regularizer=regularizers.l2(0.01))(x)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
-            )(x)
+            # )(x)
         # x = Dropout(0.5)(x)
         x = MaxPooling2D((2, 2))(x)
 
