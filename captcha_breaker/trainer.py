@@ -19,7 +19,7 @@ def train(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530090310.h5')
+    model = load_model('models/model_1530098139.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=4096, nb_epoch=1,
                         nb_worker=28,
@@ -29,7 +29,7 @@ def continue_2_train(batch_size=32, nb_type=3):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530090310.h5')
+    model = load_model('models/model_1530098139.h5')
     generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=4)
     X, y = next(generator)
     ture_y = image_generactor.decode(y)
@@ -46,13 +46,13 @@ def predict():
     import matplotlib.pyplot as plt
     from keras.models import load_model
     import numpy as np
-    image = resize(cv2.cvtColor(cv2.imread("./images/image3.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
-    # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
+    image = resize(cv2.cvtColor(cv2.imread("./images/image13.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
+    _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
     image1 = np.expand_dims(image, axis=2)
     image1 = np.expand_dims(image1, axis=0)
-    print(image1)
-    model = load_model('models/model_1530090310.h5')
+    print(image)
+    model = load_model('models/model_1530098139.h5')
     predicted_text = image_generactor.decode(model.predict(image1))
     plt.imshow(image, cmap="gray")
     # print(y)
