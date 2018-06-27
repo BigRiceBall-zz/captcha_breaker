@@ -10,25 +10,12 @@ from skimage.transform import resize
 import numpy as np
 import skimage.io as io
 import cv2 
+import threading
 
 def decode(y):
     y = np.argmax(np.array(y), axis=2)[:,0]
     return ''.join([setting.CHARACTERS[x] for x in y])
 
-def generator_4_multiple_types(batch_size=32, nb_type=3):
-    X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
-    y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
-    generator = ImageCaptcha(width=170, height=80)
-    model_image = cv2.imread("./images/models.jpeg")
-    while True:
-        for i in range(batch_size):
-            random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
-            X[i] = generate_different_type(random_str, model_image, generator, nb_type)
-            # print(X[i])
-            for j, ch in enumerate(random_str):
-                y[j][i, :] = 0
-                y[j][i, setting.CHARACTERS.find(ch)] = 1
-        yield X, y
 
 # def encode(text):
 def _generate_type_1_model_image():
@@ -77,3 +64,46 @@ def generate_different_type(text, model_image, generator, nb_type=1):
 # import cv2
 # image1 = cv2.imread("./images/models.jpeg")
 # image_generactor.generate_type_1_captcha(image1, "ABCD")
+
+
+
+import threading
+
+class threadsafe_iter:
+    """Takes an iterator/generator and makes it thread-safe by
+    serializing call to the `next` method of given iterator/generator.
+    """
+    def __init__(self, it):
+        self.it = it
+        self.lock = threading.Lock()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        with self.lock:
+            return next(self.it)
+
+
+def threadsafe_generator(f):
+    """A decorator that takes a generator function and makes it thread-safe.
+    """
+    def g(*a, **kw):
+        return threadsafe_iter(f(*a, **kw))
+    return g
+
+@threadsafe_generator
+def generator_4_multiple_types(batch_size=32, nb_type=3):
+    X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
+    y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
+    generator = ImageCaptcha(width=170, height=80)
+    model_image = cv2.imread("./images/models.jpeg")
+    while True:
+        for i in range(batch_size):
+            random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
+            X[i] = generate_different_type(random_str, model_image, generator, nb_type)
+            # print(X[i])
+            for j, ch in enumerate(random_str):
+                y[j][i, :] = 0
+                y[j][i, setting.CHARACTERS.find(ch)] = 1
+        yield X, y
