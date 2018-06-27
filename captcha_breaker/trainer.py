@@ -19,7 +19,7 @@ def train(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530090310_1.h5')
+    model = load_model('models/model_1530090310.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=128, nb_epoch=32,
                         nb_worker=28,
@@ -71,10 +71,10 @@ def test2():
 
     model = load_model('models/model_1530071864.h5')
     model.get_layer('conv2d_1').kernel_regularizer = regularizers.l2(0.01) 
-    model.get_layer('conv2d_1').bias_regularizer = regularizers.l2(0.01)
+    # model.get_layer('conv2d_1').bias_regularizer = regularizers.l2(0.01)
     model.get_layer('conv2d_1').activity_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_2').kernel_regularizer = regularizers.l2(0.01) 
-    model.get_layer('conv2d_2').bias_regularizer = regularizers.l2(0.01)
+    # model.get_layer('conv2d_2').bias_regularizer = regularizers.l2(0.01)
     model.get_layer('conv2d_2').activity_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_3').kernel_regularizer = regularizers.l2(0.01) 
     model.get_layer('conv2d_3').bias_regularizer = regularizers.l2(0.01)
