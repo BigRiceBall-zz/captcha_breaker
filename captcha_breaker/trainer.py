@@ -16,6 +16,16 @@ def train(batch_size=32, nb_type=3):
                         validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
 
+def train_CTC(batch_size=32, nb_type=3):
+    now = str(int(time.time()))
+    model, conv_shape = model_builder.CTC()
+                
+    model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
+                        samples_per_epoch=10240, nb_epoch=5,
+                        nb_worker=28,
+                        validation_data=image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
+    model.save("models/model_CTC_" + now + ".h5")
+
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))

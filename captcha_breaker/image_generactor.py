@@ -128,6 +128,8 @@ def add_gaussian_noise(im,prop,varSigma):
 
 
 
+
+
 import threading
 
 class threadsafe_iter:
@@ -175,7 +177,27 @@ def generator_4_multiple_types(batch_size=32, nb_type=3):
                 y[j][i, setting.CHARACTERS.find(ch)] = 1
         yield X, y
     
-
+@threadsafe_generator
+def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
+    X = np.zeros((batch_size, setting.WIDTH, setting.HEIGHT, 1), dtype=np.float32)
+    y = np.zeros((batch_size, setting.MAX_CAPTCHA), dtype=np.uint8)
+    generator = ImageCaptcha(width=170, height=80)
+    model_image = cv2.imread("./images/models.jpeg")
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
+    images = h5f["X"].value
+    texts = h5f["Y"].value
+    print(conv_shape)
+    while True:
+        for i in range(batch_size):
+            random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
+            image, text = generate_different_type(random_str, model_image, generator, 
+                                                (images, texts), nb_type)
+            y[i] = [setting.CHARACTERS.find(x) for x in text]
+            X[i] = image.transpose(1, 0, 2)
+            # print(y[i])
+            # print(len(np.ones(batch_size)*setting.MAX_CAPTCHA))
+            # break
+        yield [X, y, np.ones(batch_size)*int(conv_shape[1]-2), np.ones(batch_size)*setting.MAX_CAPTCHA], np.ones(batch_size)
 
 import h5py
 from tqdm import tqdm
