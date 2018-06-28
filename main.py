@@ -1,6 +1,6 @@
 from captcha_breaker import trainer
 
-trainer.train_CTC(batch_size=128, nb_type=6)
+# trainer.train_CTC(batch_size=128, nb_type=6)
 
 # trainer.train(batch_size=128, nb_type=6)
 # trainer.predict()
@@ -18,7 +18,9 @@ trainer.train_CTC(batch_size=128, nb_type=6)
 #         shutil.move("images/jd/captcha/jd/" + image, "images/jd/captcha/jd/unknown/"+ image)
 #         count+=1
 #     print(float(count/len(images)))
+
 # trainer.predict_jd()
+
 # from captcha_breaker import image_generactor
 # image_generactor.true_image2H5()
 
@@ -26,5 +28,5 @@ trainer.train_CTC(batch_size=128, nb_type=6)
 # h5file = h5py.File('images/jd/captcha/origin_jd_captcha.h5', 'r')
 # print(h5file['Y'])
 # print(h5file['Y'].value[0].decode("ascii"))
-# trainer.test_JD()
+trainer.test_JD()
 

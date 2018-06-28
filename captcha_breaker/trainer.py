@@ -21,7 +21,7 @@ def train_CTC(batch_size=32, nb_type=3):
     model, conv_shape = model_builder.CTC()
                 
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=10240, nb_epoch=5,
+                        samples_per_epoch=51200, nb_epoch=4,
                         nb_worker=28,
                         validation_data=image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_CTC_" + now + ".h5")
@@ -39,7 +39,7 @@ def continue_2_train(batch_size=32, nb_type=3):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530167168.h5')
+    model = load_model('models/model_1530170070.h5')
     generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=5)
     X, y = next(generator)
     ture_y = image_generactor.decode(y)
@@ -59,7 +59,7 @@ def test_JD():
     import os
     import h5py
     from tqdm import tqdm
-    model = load_model('models/model_1530167168.h5')
+    model = load_model('models/model_1530170070.h5')
     h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
@@ -91,7 +91,7 @@ def predict():
     image1 = np.expand_dims(image, axis=2)
     image1 = np.expand_dims(image1, axis=0)
     print(image)
-    model = load_model('models/model_1530167168.h5')
+    model = load_model('models/model_1530170070.h5')
     predicted_text = image_generactor.decode(model.predict(image1))
     plt.imshow(image, cmap="gray")
     # print(y)
@@ -106,7 +106,7 @@ def predict_jd():
     import numpy as np
     import os
     from tqdm import tqdm
-    model = load_model('models/model_1530167168.h5')
+    model = load_model('models/model_1530170070.h5')
     filenames = os.listdir("images/jd/captcha/jd/")
     length = len(filenames)
     count = 0
