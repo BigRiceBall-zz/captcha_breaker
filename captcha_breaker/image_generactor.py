@@ -139,13 +139,16 @@ def generator_4_multiple_types(batch_size=32, nb_type=3):
     y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
     generator = ImageCaptcha(width=170, height=80)
     model_image = cv2.imread("./images/models.jpeg")
-    true_images = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
+    images = h5f["X"].value
+    texts = h5f["Y"].value
+
     # print(true_images)
     while True:
         for i in range(batch_size):
             random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
             X[i], text = generate_different_type(random_str, model_image, generator, 
-                                                (true_images["X"].value, true_images["Y"].value), nb_type)
+                                                (images, texts), nb_type)
             # print(X[i])
             for j, ch in enumerate(text):
                 y[j][i, :] = 0
