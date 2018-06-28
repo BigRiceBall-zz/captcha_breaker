@@ -84,7 +84,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         pp = np.random.uniform(0.0001, 0.12)
         image = true_images_labels[0][p]
 
-        # image = add_gaussian_noise(image, pp, 0.1+pp*pp)
+        image = add_gaussian_noise(image, pp, 0.1+pp*pp)
 
         # print(image)
         # plt.imshow(image.reshape(36, 150), cmap="gray")
@@ -98,7 +98,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         image = true_images_labels[0][p].reshape(setting.HEIGHT, setting.WIDTH)
         _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
 
-        # image = add_saltnpeppar_noise(image, 0.1 + pp)
+        image = add_saltnpeppar_noise(image, 0.1 + pp)
         
         # print(image)
         # plt.imshow(image, cmap="gray")
