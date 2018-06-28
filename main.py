@@ -24,4 +24,5 @@ trainer.continue_2_train(batch_size=128, nb_type=6)
 # h5file = h5py.File('images/jd/captcha/origin_jd_captcha.h5', 'r')
 # print(h5file['Y'])
 # print(h5file['Y'].value[0].decode("ascii"))
+# trainer.test_JD()
 

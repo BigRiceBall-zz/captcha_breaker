@@ -19,9 +19,9 @@ def train(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530115763.h5')
+    model = load_model('models/model_1530163862.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=4096, nb_epoch=1,
+                        samples_per_epoch=8192, nb_epoch=1,
                         nb_worker=28,
                         validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
@@ -29,7 +29,7 @@ def continue_2_train(batch_size=32, nb_type=3):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530115763.h5')
+    model = load_model('models/model_1530163862.h5')
     generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=5)
     X, y = next(generator)
     ture_y = image_generactor.decode(y)
@@ -40,19 +40,48 @@ def test():
     print("true: " + ture_y + " predict: " + predicted_text)
     plt.show()
 
+def test_JD():
+    import cv2 
+    from skimage.transform import resize
+    import matplotlib.pyplot as plt
+    from keras.models import load_model
+    import numpy as np
+    import os
+    import h5py
+    from tqdm import tqdm
+    model = load_model('models/model_1530163862.h5')
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
+    images = h5f["X"].value
+    texts = h5f["Y"].value
+    count = 0
+    length = len(images)
+    for index, image in tqdm(enumerate(images)):
+        # print(image.shape)
+        _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
+        image = np.expand_dims(image, axis=2) 
+        image = np.expand_dims(image, axis=0)
+        predicted_text = image_generactor.decode(model.predict(image))
+        text = texts[index].decode("ascii")
+        if text == predicted_text:
+            count += 1
+    print("accuracy: " + str(count/length))
+
+
+
+
 def predict():
     import cv2 
     from skimage.transform import resize
     import matplotlib.pyplot as plt
     from keras.models import load_model
     import numpy as np
-    image = resize(cv2.cvtColor(cv2.imread("./images/image11.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
+    image = resize(cv2.cvtColor(cv2.imread("./images/image10.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
     _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
     image1 = np.expand_dims(image, axis=2)
     image1 = np.expand_dims(image1, axis=0)
     print(image)
-    model = load_model('models/model_1530115763.h5')
+    model = load_model('models/model_1530163862.h5')
     predicted_text = image_generactor.decode(model.predict(image1))
     plt.imshow(image, cmap="gray")
     # print(y)
@@ -66,17 +95,18 @@ def predict_jd():
     from keras.models import load_model
     import numpy as np
     import os
-    model = load_model('models/model_1530115763.h5')
+    from tqdm import tqdm
+    model = load_model('models/model_1530163862.h5')
     filenames = os.listdir("images/jd/captcha/jd/")
     length = len(filenames)
     count = 0
     print(length)
-    for filename in filenames:
+    for filename in tqdm(filenames):
         # print(filename)
         if (filename.endswith(".jpg") or filename.endswith(".jpeg") or
             filename.endswith(".png") or filename.endswith(".gif")):
             image = resize(cv2.cvtColor(cv2.imread("images/jd/captcha/jd/" + filename), cv2.COLOR_BGR2GRAY), (36, 150))
-            # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
+            _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
             image1 = np.expand_dims(image, axis=2)
             image1 = np.expand_dims(image1, axis=0)
@@ -87,7 +117,7 @@ def predict_jd():
             # print("true: " + filename[0:4] + " predict: " + predicted_text)
             if filename[0:4] == predicted_text:
                 count+=1
-                print(count)
+                # print(count)
     print("accuracy: " + str(count/length))
         # plt.show()
 
