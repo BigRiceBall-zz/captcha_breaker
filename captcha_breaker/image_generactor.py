@@ -81,8 +81,12 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
     elif type_range[4] <= p and p < type_range[5]:
         p = np.random.randint(0, true_images_labels[0].shape[0])
         # print(p)
+        pp = np.random.uniform(0.0001, 0.12)
         image = true_images_labels[0][p]
-        # print(image.shape)
+
+        # image = add_gaussian_noise(image, pp, 0.1+pp*pp)
+
+        # print(image)
         # plt.imshow(image.reshape(36, 150), cmap="gray")
         # print(true_images_labels[1][p].decode("ascii"))
         # plt.show()
@@ -94,13 +98,29 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         image = true_images_labels[0][p].reshape(setting.HEIGHT, setting.WIDTH)
         _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
 
-        # print(image.shape)
+        # image = add_saltnpeppar_noise(image, 0.1 + pp)
+        
+        # print(image)
         # plt.imshow(image, cmap="gray")
         # print(true_images_labels[1][p].decode("ascii"))
         # plt.show()
         return np.expand_dims(image, axis=2), true_images_labels[1][p].decode("ascii")
     # elif 
 
+def add_saltnpeppar_noise(im,prop):
+    N = int(np.round(np.prod(im.shape)*prop))
+    index = np.unravel_index(np.random.permutation(np.prod(im.shape))[1:N],im.shape)
+    im2 = np.copy(im)
+    im2[index] = 1-im2[index]
+    return im2
+    
+def add_gaussian_noise(im,prop,varSigma):
+    N = int(np.round(np.prod(im.shape)*prop))
+    index = np.unravel_index(np.random.permutation(np.prod(im.shape))[1:N],im.shape)
+    e = varSigma*np.random.randn(np.prod(im.shape)).reshape(im.shape)
+    im2 = np.copy(im)
+    im2[index] += e[index]
+    return im2
 # from captcha_breaker import image_generactor
 # import cv2
 # image1 = cv2.imread("./images/models.jpeg")

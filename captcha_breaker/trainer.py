@@ -19,7 +19,7 @@ def train(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530167168.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=8192, nb_epoch=1,
                         nb_worker=28,
@@ -29,7 +29,7 @@ def continue_2_train(batch_size=32, nb_type=3):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530167168.h5')
     generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=5)
     X, y = next(generator)
     ture_y = image_generactor.decode(y)
@@ -49,7 +49,7 @@ def test_JD():
     import os
     import h5py
     from tqdm import tqdm
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530167168.h5')
     h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
@@ -57,8 +57,8 @@ def test_JD():
     length = len(images)
     for index, image in tqdm(enumerate(images)):
         # print(image.shape)
-        _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
-        image = np.expand_dims(image, axis=2) 
+        # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
+        # image = np.expand_dims(image, axis=2) 
         image = np.expand_dims(image, axis=0)
         predicted_text = image_generactor.decode(model.predict(image))
         text = texts[index].decode("ascii")
@@ -75,13 +75,13 @@ def predict():
     import matplotlib.pyplot as plt
     from keras.models import load_model
     import numpy as np
-    image = resize(cv2.cvtColor(cv2.imread("./images/image10.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
+    image = resize(cv2.cvtColor(cv2.imread("./images/image3.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
     _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
     image1 = np.expand_dims(image, axis=2)
     image1 = np.expand_dims(image1, axis=0)
     print(image)
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530167168.h5')
     predicted_text = image_generactor.decode(model.predict(image1))
     plt.imshow(image, cmap="gray")
     # print(y)
@@ -96,7 +96,7 @@ def predict_jd():
     import numpy as np
     import os
     from tqdm import tqdm
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530167168.h5')
     filenames = os.listdir("images/jd/captcha/jd/")
     length = len(filenames)
     count = 0
