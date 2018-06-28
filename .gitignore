@@ -111,3 +111,6 @@ venv.bak/
 .DS_Store
 ./log/
 !models.jpeg
+*.tar
+origin_jd_captcha_test.h5
+origin_jd_captcha_train.h5

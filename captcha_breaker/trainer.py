@@ -19,7 +19,7 @@ def train(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530098139.h5')
+    model = load_model('models/model_1530115763.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=4096, nb_epoch=1,
                         nb_worker=28,
@@ -29,8 +29,8 @@ def continue_2_train(batch_size=32, nb_type=3):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530098139.h5')
-    generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=4)
+    model = load_model('models/model_1530115763.h5')
+    generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=5)
     X, y = next(generator)
     ture_y = image_generactor.decode(y)
     predicted_text = image_generactor.decode(model.predict(X))
@@ -46,19 +46,50 @@ def predict():
     import matplotlib.pyplot as plt
     from keras.models import load_model
     import numpy as np
-    image = resize(cv2.cvtColor(cv2.imread("./images/image13.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
+    image = resize(cv2.cvtColor(cv2.imread("./images/image11.jpeg"), cv2.COLOR_BGR2GRAY), (36, 150))
     _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
     image1 = np.expand_dims(image, axis=2)
     image1 = np.expand_dims(image1, axis=0)
     print(image)
-    model = load_model('models/model_1530098139.h5')
+    model = load_model('models/model_1530115763.h5')
     predicted_text = image_generactor.decode(model.predict(image1))
     plt.imshow(image, cmap="gray")
     # print(y)
     print(" predict: " + predicted_text)
     plt.show()
-    
+
+def predict_jd():
+    import cv2 
+    from skimage.transform import resize
+    import matplotlib.pyplot as plt
+    from keras.models import load_model
+    import numpy as np
+    import os
+    model = load_model('models/model_1530115763.h5')
+    filenames = os.listdir("images/jd/captcha/jd/")
+    length = len(filenames)
+    count = 0
+    print(length)
+    for filename in filenames:
+        # print(filename)
+        if (filename.endswith(".jpg") or filename.endswith(".jpeg") or
+            filename.endswith(".png") or filename.endswith(".gif")):
+            image = resize(cv2.cvtColor(cv2.imread("images/jd/captcha/jd/" + filename), cv2.COLOR_BGR2GRAY), (36, 150))
+            # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
+
+            image1 = np.expand_dims(image, axis=2)
+            image1 = np.expand_dims(image1, axis=0)
+            # print(image)
+            predicted_text = image_generactor.decode(model.predict(image1))
+            # plt.imshow(image, cmap="gray")
+            # print(y)
+            # print("true: " + filename[0:4] + " predict: " + predicted_text)
+            if filename[0:4] == predicted_text:
+                count+=1
+                print(count)
+    print("accuracy: " + str(count/length))
+        # plt.show()
 
 from keras.models import *
 from keras.layers import *

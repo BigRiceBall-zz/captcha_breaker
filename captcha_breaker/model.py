@@ -10,14 +10,14 @@ def simple():
     x = noise.GaussianNoise(10)(x)
     for i in range(3):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            kernel_regularizer=regularizers.l2(0.001)
+            kernel_regularizer=regularizers.l2(0.003)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
         x = noise.GaussianNoise(10)(x)
         # x = Dropout(0.5)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            kernel_regularizer=regularizers.l2(0.001)
+            kernel_regularizer=regularizers.l2(0.003)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
