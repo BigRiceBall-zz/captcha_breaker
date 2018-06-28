@@ -150,7 +150,7 @@ def generator_4_multiple_types(batch_size=32, nb_type=3):
             for j, ch in enumerate(text):
                 y[j][i, :] = 0
                 y[j][i, setting.CHARACTERS.find(ch)] = 1
-        # yield X, y
+        yield X, y
     
 
 
