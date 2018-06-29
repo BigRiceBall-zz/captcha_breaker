@@ -40,6 +40,8 @@ def generate_type_1_captcha(model_image, text):
     # plt.show()
     return image
 
+
+
 # from captcha_breaker import image_generactor
 # image_generactor.generate_type_1_captcha(model_image, "XA8B")
 
@@ -223,6 +225,27 @@ def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
             # print(len(np.ones(batch_size)*setting.MAX_CAPTCHA))
             # break
         yield [X, y, np.ones(batch_size)*int(conv_shape[1]-2), np.ones(batch_size)*setting.MAX_CAPTCHA], np.ones(batch_size)
+
+@threadsafe_generator
+def generate_true_test_captcha(conv_shape, batch_size=128):
+    X = np.zeros((batch_size, setting.WIDTH, setting.HEIGHT, 1), dtype=np.float32)
+    y = np.zeros((batch_size, setting.MAX_CAPTCHA), dtype=np.uint8)
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
+    images = h5f["X"].value
+    texts = h5f["Y"].value
+    length = len(images)
+    while True:
+        for i in range(batch_size):
+            p = np.random.randint(0, length)
+            # print(texts[p])
+            y[i] = [setting.CHARACTERS.find(x) for x in texts[p].decode("ascii")]
+            X[i] = images[p].transpose(1, 0, 2)
+            # print(y[i])
+            # print(len(np.ones(batch_size)*setting.MAX_CAPTCHA))
+            # break
+        yield [X, y, np.ones(batch_size)*int(conv_shape[1]-2), np.ones(batch_size)*setting.MAX_CAPTCHA], np.ones(batch_size)
+
+
 
 import h5py
 from tqdm import tqdm
