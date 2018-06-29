@@ -186,7 +186,7 @@ def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
     h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
-    print(conv_shape)
+    # print(conv_shape)
     while True:
         for i in range(batch_size):
             random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])

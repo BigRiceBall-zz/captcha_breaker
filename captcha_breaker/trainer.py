@@ -17,10 +17,11 @@ def train(batch_size=32, nb_type=3):
     model.save("models/model_" + now + ".h5")
 from keras.callbacks import *
 
-def evaluate(base_model, batch_num=10):
+def evaluate(base_model, conv_shape, batch_num=10, nb_type=6):
     batch_acc = 0
-    generator = gen(128)
+    generator = image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_num, nb_type=nb_type)
     for i in range(batch_num):
+        print(i)
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
@@ -29,13 +30,28 @@ def evaluate(base_model, batch_num=10):
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
+# def evaluate_training(base_model, batch_num=10):
+#     batch_acc = 0
+#     generator = gen(128)
+#     for i in range(batch_num):
+#         [X_test, y_test, _, _], _  = next(generator)
+#         y_pred = base_model.predict(X_test)
+#         shape = y_pred[:,2:,:].shape
+#         out = K.get_value(K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])[0][0])[:, :4]
+#         if out.shape[1] == 4:
+#             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
+#     return batch_acc / batch_num
+
 class Evaluate(Callback):
-    def __init__(self, base_model):
+    def __init__(self, base_model, conv_shape, batch_num=10, nb_type=6):
         self.accs = []
         self._base_model = base_model
+        self._conv_shape = conv_shape
+        self._batch_size = 10
+        self._nb_type = 6
     
     def on_epoch_end(self, epoch, logs=None):
-        acc = evaluate(self._base_model)*100
+        acc = evaluate(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
         self.accs.append(acc)
         print()
         print('acc: %f%%'%acc)
@@ -44,7 +60,7 @@ def train_CTC(batch_size=32, nb_type=3):
     now = str(int(time.time()))
     model, base_model, conv_shape = model_builder.CTC()
 
-    evaluator = Evaluate(base_model)                
+    evaluator = Evaluate(base_model, conv_shape)                
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=51200, nb_epoch=4,
                         callbacks=[EarlyStopping(patience=10), evaluator],
