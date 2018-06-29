@@ -1,6 +1,9 @@
 from captcha_breaker import trainer
 
-trainer.train_CTC(batch_size=128, nb_type=6)
+trainer.train_CTC(batch_size=256, nb_type=6)
+# trainer.test_CTC()
+# trainer.predict_JD_CTC()
+# trainer.test_JD_CTC()
 
 # trainer.train(batch_size=128, nb_type=6)
 # trainer.predict()

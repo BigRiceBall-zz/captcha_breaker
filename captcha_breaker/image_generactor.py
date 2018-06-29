@@ -79,6 +79,31 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # plt.show()
         return np.expand_dims(image, axis=2), text
     elif type_range[4] <= p and p < type_range[5]:
+        # np.set_printoptions(threshold=np.nan)
+        image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
+        pp = np.random.uniform(-0.005, 0.005)
+        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY)
+        image = util.invert(image)
+        pp = np.random.uniform(0, 0.11)
+        image = add_saltnpeppar_noise(image, pp)
+
+        # print(image)
+        # plt.imshow(image, cmap="gray")
+        # plt.show()
+        return np.expand_dims(image, axis=2), text
+    elif type_range[5] <= p and p < type_range[6]:
+        image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
+        pp = np.random.uniform(-0.005, 0.005)
+        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
+        pp = np.random.uniform(0, 0.11)
+        image = add_saltnpeppar_noise(image, pp)
+
+        # print(image)
+        # plt.imshow(image, cmap="gray")
+        # plt.show()
+        return np.expand_dims(image, axis=2), text
+
+    elif type_range[7] <= p and p < type_range[8]:
         p = np.random.randint(0, true_images_labels[0].shape[0])
         # print(p)
         pp = np.random.uniform(0.0001, 0.12)
@@ -91,7 +116,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # print(true_images_labels[1][p].decode("ascii"))
         # plt.show()
         return image, true_images_labels[1][p].decode("ascii")
-    elif type_range[5] <= p and p < type_range[6]:
+    elif type_range[9] <= p and p < type_range[10]:
         p = np.random.randint(0, true_images_labels[0].shape[0])
         # print(p)
         pp = np.random.uniform(-0.005, 0.005)
