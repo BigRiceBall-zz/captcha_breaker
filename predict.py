@@ -24,6 +24,8 @@ def decode(y):
 
 def predict(path):
     model = load_model('models/model_1530163862.h5')
+    # model_1530170070.h5
+    # model_1530167168.h5
     image = resize(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY), (36, 150))
     _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
     image = np.expand_dims(image, axis=2)

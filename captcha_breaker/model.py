@@ -72,4 +72,4 @@ def CTC():
     loss_out = Lambda(ctc_lambda_func, output_shape=(1,), name='ctc')([x, labels, input_length, label_length])
     model = Model(inputs=[input_tensor, labels, input_length, label_length], outputs=[loss_out])
     model.compile(loss={'ctc': lambda y_true, y_pred: y_pred}, optimizer='adadelta', metrics=['accuracy'])
-    return model, conv_shape
+    return model, base_model, conv_shape
