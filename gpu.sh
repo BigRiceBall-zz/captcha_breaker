@@ -3,7 +3,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --partition gpu
 #SBATCH --job-name=gpujob
-#SBATCH --time=18:00:00
+#SBATCH --time=30:00:00
 #SBATCH --mem=10240M
 
 module load libs/tensorflow/1.2
