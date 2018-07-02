@@ -16,6 +16,7 @@ def train(batch_size=32, nb_type=3):
                         nb_worker=28,
                         validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
+
 from keras.callbacks import *
 
 def evaluate(base_model, conv_shape, batch_num=10, nb_type=6):
@@ -251,11 +252,10 @@ def test_CTC():
     # json_model = model.to_json()
 
     import json
-    model, base_model, conv_shape = model_builder.CTC()
+    _, _, conv_shape = model_builder.CTC()
 
-    with open('data.json') as f:
-        data = json.load(f)
-    model.load_weights('test.h5')
+    model = load_model("models/model_CTC_base_model_1530353300.h5")
+
     # model.summary()
     # generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=5)
     NUMBER = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -265,19 +265,20 @@ def test_CTC():
     CHAR_SET_LEN = len(CHAR_SET)
     CHARACTERS = ''.join(CHAR_SET)
     # characters2 = characters + ' '
-    # [X_test, y_test, _, _], _  = next(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=1, nb_type=6))
+    [X_test, y_test, _, _], _  = next(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=1, nb_type=4))
     now = time.time()
 
-    image = resize(cv2.cvtColor(cv2.imread("./images/jd/captcha/jd/unknown/tmp153008438483711886.jpg"), cv2.COLOR_BGR2GRAY), (36, 150))
+    # image = resize(cv2.cvtColor(cv2.imread("./images/jd/captcha/jd/unknown/tmp153008438483711886.jpg"), cv2.COLOR_BGR2GRAY), (36, 150))
     # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
 
-    image = np.expand_dims(image, axis=2)
-    image = image.transpose(1, 0, 2)
-    X_test = np.expand_dims(image, axis=0)
+    # image = np.expand_dims(image, axis=2)
+    # image = image.transpose(1, 0, 2)
+    # X_test = np.expand_dims(image, axis=0)
 
-    y_pred = base_model.predict(X_test)
+    y_pred = model.predict(X_test)
     y_pred = y_pred[:,2:,:]
     out = K.get_value(K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], top_paths=1)[0][0])[:, :4]
+    print(out)
     out = ''.join([CHARACTERS[x] for x in out[0]])   
     print("elapsed: " + str(time.time() - now))
 
@@ -358,7 +359,7 @@ def test_JD_CTC():
     import h5py
     from tqdm import tqdm
 
-    model = load_model("models/model_CTC_base_model_1530176456.h5")
+    model = load_model("models/model_CTC_base_model_1530353300.h5")
 
     # print(model.get_config())
     NUMBER = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -368,7 +369,7 @@ def test_JD_CTC():
     CHAR_SET_LEN = len(CHAR_SET)
     CHARACTERS = ''.join(CHAR_SET)
 
-    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
     count = 0
@@ -376,13 +377,17 @@ def test_JD_CTC():
     outs = []
     for index, image in enumerate(tqdm(images)):
         _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
+        print(image)
+        plt.imshow(image)
         image = np.expand_dims(image, axis=2) 
         image1 = image.transpose(1, 0, 2)
-        # print(image1)
         X_test = np.expand_dims(image1, axis=0)
         y_pred = model.predict(X_test)
         y_pred = y_pred[:,2:,:]
-        # out = K.get_value(K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )[0][0])[:, :4]
+        out = K.get_value(K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )[0][0])[:, :4]
+        print(''.join([CHARACTERS[x] for x in out[:,:4][0]]))
+        plt.show()
+
         out = K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )
         outs.append(out[0][0])
     predict_encode_texts = K.batch_get_value(outs)

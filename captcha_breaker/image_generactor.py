@@ -215,17 +215,19 @@ def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
     texts = h5f["Y"].value
     # print(conv_shape)
     while True:
+        # texts = list() 
         for i in range(batch_size):
             random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
             image, text = generate_different_type(random_str, model_image, generator, 
                                                 (images, texts), nb_type)
             y[i] = [setting.CHARACTERS.find(x) for x in text]
             X[i] = image.transpose(1, 0, 2)
+            # texts.append(text)
             # print(y[i])
             # print(len(np.ones(batch_size)*setting.MAX_CAPTCHA))
             # break
         yield [X, y, np.ones(batch_size)*int(conv_shape[1]-2), np.ones(batch_size)*setting.MAX_CAPTCHA], np.ones(batch_size)
-
+        # yield texts
 @threadsafe_generator
 def generate_true_test_captcha(conv_shape, batch_size=128):
     X = np.zeros((batch_size, setting.WIDTH, setting.HEIGHT, 1), dtype=np.float32)
