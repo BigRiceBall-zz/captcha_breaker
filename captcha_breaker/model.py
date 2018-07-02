@@ -45,20 +45,20 @@ def CTC():
     rnn_size = 128
     input_tensor = Input((setting.WIDTH, setting.HEIGHT, 1))
     x = input_tensor
-    for i in range(2):
-        x = Convolution2D(32, (3, 3), activation='relu')(x)
+    for i in range(1):
+        x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
         x = BatchNormalization()(x)
-        x = Dropout(1 - 0.1 * i)(x)
-        x = Convolution2D(32, (3, 3), activation='relu')(x)
+        x = Dropout(0.7 - 0.1 * i)(x)
+        x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
         x = BatchNormalization()(x)
-        x = Dropout(0.9 - 0.1 * i)(x)
+        x = Dropout(0.6 - 0.1 * i)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = BatchNormalization()(x)
 
     conv_shape = x.get_shape()
     x = Reshape(target_shape=(int(conv_shape[1]), int(conv_shape[2]*conv_shape[3])))(x)
 
-    x = Dense(32, activation='relu')(x)
+    x = Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.5)(x)
 

@@ -71,7 +71,7 @@ def train_CTC(batch_size=32, nb_type=3):
     #                     image_generactor.generator_4_multiple_types_CTC
     #                     (conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=51200, nb_epoch=4,
+                        samples_per_epoch=1280, nb_epoch=160,
                         callbacks=[EarlyStopping(patience=10), evaluator],
                         nb_worker=28,
                         validation_data=
