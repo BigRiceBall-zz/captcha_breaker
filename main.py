@@ -1,11 +1,12 @@
 from captcha_breaker import trainer
 # from captcha_breaker import image_generactor
 
-trainer.train_CTC(batch_size=128, nb_type=6)
+# trainer.train_CTC(batch_size=128, nb_type=6)
 
 # trainer.test_CTC()
 # trainer.predict_JD_CTC()
 # trainer.test_JD_CTC()
+trainer.continue_2_train_CTC(batch_size=128, nb_type=6)
 
 # trainer.train(batch_size=128, nb_type=6)
 # trainer.predict()
@@ -34,4 +35,9 @@ trainer.train_CTC(batch_size=128, nb_type=6)
 # print(h5file['Y'])
 # print(h5file['Y'].value[0].decode("ascii"))
 # trainer.test_JD()
+
+
+# from captcha_breaker import ocr
+
+# ocr.parse_images_to_text()
 

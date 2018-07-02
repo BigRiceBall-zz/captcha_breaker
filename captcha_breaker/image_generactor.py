@@ -31,7 +31,7 @@ def generate_type_1_captcha(model_image, text):
     font = cv2.FONT_HERSHEY_SIMPLEX
     # print(text)
     p = np.random.randint(10, size=2) - 4
-    interval = np.random.randint(5, size=1) + 13
+    interval = np.random.randint(6, size=1) + 14
     height = 37 + p[0]
     for index, char in enumerate(text):
         image = cv2.putText(image, char, (height + index*interval, 28 + p[1]), font, 1, (0,0,0), 2, cv2.LINE_AA)
@@ -66,7 +66,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
     elif type_range[2] <= p and p < type_range[3]:
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
-        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
+        _, image = cv2.threshold(image,0.4 + pp,1,cv2.THRESH_BINARY) 
         # plt.imshow(image, cmap="gray")
         # plt.show()
         return np.expand_dims(image, axis=2), text
@@ -74,7 +74,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # np.set_printoptions(threshold=np.nan)
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
-        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY)
+        _, image = cv2.threshold(image,0.4 + pp,1,cv2.THRESH_BINARY)
         image = util.invert(image)
         # print(image)
         # plt.imshow(image, cmap="gray")
@@ -84,7 +84,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # np.set_printoptions(threshold=np.nan)
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
-        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY)
+        _, image = cv2.threshold(image,0.4 + pp,1,cv2.THRESH_BINARY)
         image = util.invert(image)
         pp = np.random.uniform(0, 0.11)
         image = add_saltnpeppar_noise(image, pp)
@@ -96,7 +96,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
     elif type_range[5] <= p and p < type_range[6]:
         image = resize(cv2.cvtColor(generate_type_1_captcha(model_image, text), cv2.COLOR_BGR2GRAY), (setting.HEIGHT, setting.WIDTH))
         pp = np.random.uniform(-0.005, 0.005)
-        _, image = cv2.threshold(image,0.5 + pp,1,cv2.THRESH_BINARY) 
+        _, image = cv2.threshold(image,0.4 + pp,1,cv2.THRESH_BINARY) 
         pp = np.random.uniform(0, 0.11)
         image = add_saltnpeppar_noise(image, pp)
 
@@ -105,7 +105,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # plt.show()
         return np.expand_dims(image, axis=2), text
 
-    elif type_range[7] <= p and p < type_range[8]:
+    elif type_range[6] <= p and p < type_range[7]:
         p = np.random.randint(0, true_images_labels[0].shape[0])
         # print(p)
         pp = np.random.uniform(0.0001, 0.12)
@@ -118,7 +118,7 @@ def generate_different_type(text, model_image, generator, true_images_labels, nb
         # print(true_images_labels[1][p].decode("ascii"))
         # plt.show()
         return image, true_images_labels[1][p].decode("ascii")
-    elif type_range[9] <= p and p < type_range[10]:
+    elif type_range[7] <= p and p < type_range[8]:
         p = np.random.randint(0, true_images_labels[0].shape[0])
         # print(p)
         pp = np.random.uniform(-0.005, 0.005)
@@ -218,6 +218,7 @@ def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
         # texts = list() 
         for i in range(batch_size):
             random_str = ''.join([random.choice(setting.CHARACTERS) for j in range(4)])
+            # random_str = "4E4U"
             image, text = generate_different_type(random_str, model_image, generator, 
                                                 (images, texts), nb_type)
             y[i] = [setting.CHARACTERS.find(x) for x in text]

@@ -81,6 +81,31 @@ def train_CTC(batch_size=32, nb_type=3):
     model.save("models/model_CTC_" + now + ".h5")
     base_model.save("models/model_CTC_base_model_" + now + ".h5")
 
+
+def continue_2_train_CTC(batch_size=32, nb_type=3):
+    now = str(int(time.time()))
+    model, base_model, conv_shape = model_builder.CTC()
+    model = load_model('models/model_CTC_1530353300.h5', custom_objects = {'<lambda>': lambda y_true, y_pred: y_pred})
+
+    evaluator = Evaluate(base_model, conv_shape)                
+    # model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
+    #                     samples_per_epoch=1280, nb_epoch=40,
+    #                     callbacks=[EarlyStopping(patience=10), evaluator],
+    #                     nb_worker=28,
+    #                     validation_data=
+    #                     image_generactor.generator_4_multiple_types_CTC
+    #                     (conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=10)
+    model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
+                        samples_per_epoch=1280, nb_epoch=40,
+                        callbacks=[EarlyStopping(patience=10), evaluator],
+                        nb_worker=28,
+                        validation_data=
+                        image_generactor.generate_true_test_captcha
+                        (conv_shape, batch_size=batch_size), nb_val_samples=1280)
+
+    model.save("models/model_CTC_" + now + ".h5")
+    base_model.save("models/model_CTC_base_model_" + now + ".h5")
+
 def continue_2_train(batch_size=32, nb_type=3):
     from keras.models import load_model
     now = str(int(time.time()))
@@ -114,20 +139,24 @@ def test_JD():
     import os
     import h5py
     from tqdm import tqdm
-    model = load_model('models/model_1530170070.h5')
+    model = load_model('models/model_1530163862.h5')
     now = time.time()
-    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
     count = 0
     length = len(images)
+    print(images.shape)
     for index, image in enumerate(tqdm(images)):
         # print(image.shape)
-        # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
-        # image = np.expand_dims(image, axis=2) 
+        _, image = cv2.threshold(image,0.4,1,cv2.THRESH_BINARY)
+        # plt.imshow(image)
+        image = np.expand_dims(image, axis=2) 
         image = np.expand_dims(image, axis=0)
         predicted_text = image_generactor.decode(model.predict(image))
         text = texts[index].decode("ascii")
+        # print(predicted_text)
+        # plt.show()
         if text == predicted_text:
             count += 1
     print("elapsed: " + str(time.time() - now))
@@ -251,7 +280,6 @@ def test_CTC():
     # from keras.models import model_from_json
     # json_model = model.to_json()
 
-    import json
     _, _, conv_shape = model_builder.CTC()
 
     model = load_model("models/model_CTC_base_model_1530353300.h5")
@@ -265,11 +293,11 @@ def test_CTC():
     CHAR_SET_LEN = len(CHAR_SET)
     CHARACTERS = ''.join(CHAR_SET)
     # characters2 = characters + ' '
-    [X_test, y_test, _, _], _  = next(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=1, nb_type=4))
+    [X_test, y_test, _, _], _  = next(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=1, nb_type=8))
     now = time.time()
 
     # image = resize(cv2.cvtColor(cv2.imread("./images/jd/captcha/jd/unknown/tmp153008438483711886.jpg"), cv2.COLOR_BGR2GRAY), (36, 150))
-    # _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY) 
+    # _, image = cv2.threshold(image,0.4,1,cv2.THRESH_BINARY) 
 
     # image = np.expand_dims(image, axis=2)
     # image = image.transpose(1, 0, 2)
@@ -376,7 +404,7 @@ def test_JD_CTC():
     length = len(images)
     outs = []
     for index, image in enumerate(tqdm(images)):
-        _, image = cv2.threshold(image,0.5,1,cv2.THRESH_BINARY)
+        _, image = cv2.threshold(image,0.4,1,cv2.THRESH_BINARY)
         print(image)
         plt.imshow(image)
         image = np.expand_dims(image, axis=2) 
