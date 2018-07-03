@@ -14,14 +14,16 @@ def simple():
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
-        x = noise.GaussianNoise(10)(x)
+        x = BatchNormalization()(x)
+        # x = noise.GaussianNoise(10)(x)
         x = Dropout(1 - (i + 1) * 0.2)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
             kernel_regularizer=regularizers.l2(0.001)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
-        x = noise.GaussianNoise(10)(x)
+        x = BatchNormalization()(x)
+        # x = noise.GaussianNoise(10)(x)
         x = Dropout(1 - (i + 1) * 0.25)(x)
         x = MaxPooling2D((2, 2))(x)
 
