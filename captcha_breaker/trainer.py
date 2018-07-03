@@ -27,9 +27,11 @@ def evaluate_training(base_model, conv_shape, batch_num=128, nb_type=6):
     batch_acc = 0
     generator = image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_num, nb_type=nb_type)
     outs = []
-    for i in tqdm(range(batch_num)):
+    y_tests = []
+    for _ in tqdm(range(batch_num)):
         # print(i)
         [X_test, y_test, _, _], _  = next(generator)
+        y_tests.append(y_test)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
         out = K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])
@@ -37,15 +39,17 @@ def evaluate_training(base_model, conv_shape, batch_num=128, nb_type=6):
     predict_encode_texts = K.batch_get_value(outs)
     for index, encoded in enumerate(tqdm(predict_encode_texts)):
         if encoded.shape[1] == 4:
-            batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
+            batch_acc += ((y_tests[index] == encoded).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
 def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
     batch_acc = 0
     print(batch_size)
     outs = []
-    for i in tqdm(range(batch_size)):
+    y_tests = []
+    for _ in tqdm(range(batch_size)):
         [X_test, y_test, _, _], _  = next(generator)
+        y_tests.append(y_test)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
         out = K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])
@@ -53,7 +57,7 @@ def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
     predict_encode_texts = K.batch_get_value(outs)
     for index, encoded in enumerate(tqdm(predict_encode_texts)):
         if encoded.shape[1] == 4:
-            batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
+            batch_acc += ((y_tests[index] == encoded).sum(axis=1) == 4).mean()
     return batch_acc / batch_size
     
 # def evaluate_training(base_model, batch_num=10):
