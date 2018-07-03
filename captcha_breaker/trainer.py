@@ -26,25 +26,33 @@ from keras.callbacks import *
 def evaluate_training(base_model, conv_shape, batch_num=128, nb_type=6):
     batch_acc = 0
     generator = image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_num, nb_type=nb_type)
+    outs = []
     for i in tqdm(range(batch_num)):
         # print(i)
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
-        out = K.get_value(K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])[0][0])[:, :4]
-        if out.shape[1] == 4:
+        out = K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])
+        outs.append(out[0][0])
+    predict_encode_texts = K.batch_get_value(outs)
+    for index, encoded in enumerate(tqdm(predict_encode_texts)):
+        if encoded.shape[1] == 4:
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
 def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
     batch_acc = 0
     print(batch_size)
+    outs = []
     for i in tqdm(range(batch_size)):
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
-        out = K.get_value(K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])[0][0])[:, :4]
-        if out.shape[1] == 4:
+        out = K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])
+        outs.append(out[0][0])
+    predict_encode_texts = K.batch_get_value(outs)
+    for index, encoded in enumerate(tqdm(predict_encode_texts)):
+        if encoded.shape[1] == 4:
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_size
     
@@ -61,7 +69,7 @@ def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
 #     return batch_acc / batch_num
 
 class Evaluate(Callback):
-    def __init__(self, base_model, conv_shape, batch_size=256, nb_type=6):
+    def __init__(self, base_model, conv_shape, batch_size=128, nb_type=6):
         self.accs = []
         self._base_model = base_model
         self._conv_shape = conv_shape
@@ -443,6 +451,8 @@ def test_JD_CTC():
         outs.append(out[0][0])
     predict_encode_texts = K.batch_get_value(outs)
     for index, encoded in enumerate(tqdm(predict_encode_texts)):
+        print(encoded)
+        break
         predict_text = ''.join([CHARACTERS[x] for x in encoded[:,:4][0]])
         if predict_text == texts[index].decode("ascii"):
             count +=1 
