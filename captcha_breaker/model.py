@@ -48,10 +48,10 @@ def CTC():
     for i in range(1):
         x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
         x = BatchNormalization()(x)
-        x = Dropout(0.7 - 0.1 * i)(x)
+        x = Dropout(0.6 - 0.1 * i)(x)
         x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
         x = BatchNormalization()(x)
-        x = Dropout(0.6 - 0.1 * i)(x)
+        x = Dropout(0.5 - 0.1 * i)(x)
         x = MaxPooling2D(pool_size=(2, 2))(x)
         x = BatchNormalization()(x)
 
@@ -60,7 +60,7 @@ def CTC():
 
     x = Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.5)(x)
+    x = Dropout(0.4)(x)
 
     gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(x)
     gru_1 = BatchNormalization()(gru_1)

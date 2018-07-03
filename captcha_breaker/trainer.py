@@ -3,6 +3,7 @@ import captcha_breaker.model as model_builder
 from captcha_breaker import image_generactor
 import time
 from keras import backend as K
+import numpy as np
 
 def train(batch_size=32, nb_type=3):
     now = str(int(time.time()))
@@ -19,7 +20,7 @@ def train(batch_size=32, nb_type=3):
 
 from keras.callbacks import *
 
-def evaluate(base_model, conv_shape, batch_num=10, nb_type=6):
+def evaluate_training(base_model, conv_shape, batch_num=1280, nb_type=6):
     batch_acc = 0
     generator = image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_num, nb_type=nb_type)
     for i in range(batch_num):
@@ -32,6 +33,19 @@ def evaluate(base_model, conv_shape, batch_num=10, nb_type=6):
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
+def evaluate_testing(base_model, conv_shape, batch_num=1280, nb_type=6):
+    batch_acc = 0
+    generator = image_generactor.generate_true_test_captcha(conv_shape, batch_size=batch_num)
+    for i in range(batch_num):
+        # print(i)
+        [X_test, y_test, _, _], _  = next(generator)
+        y_pred = base_model.predict(X_test)
+        shape = y_pred[:,2:,:].shape
+        out = K.get_value(K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])[0][0])[:, :4]
+        if out.shape[1] == 4:
+            batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
+    return batch_acc / batch_num
+    
 # def evaluate_training(base_model, batch_num=10):
 #     batch_acc = 0
 #     generator = gen(128)
@@ -49,14 +63,17 @@ class Evaluate(Callback):
         self.accs = []
         self._base_model = base_model
         self._conv_shape = conv_shape
-        self._batch_size = 10
+        self._batch_size = 1280
         self._nb_type = 6
     
     def on_epoch_end(self, epoch, logs=None):
-        acc = evaluate(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
+        acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
+        acc_test = evaluate_testing(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
         self.accs.append(acc)
+        self.accs.append(acc_test)
         print()
-        print('acc: %f%%'%acc)
+        print('training acc: %f%%'%acc)
+        print('testing acc: %f%%'%acc_test)
 
 def train_CTC(batch_size=32, nb_type=3):
     now = str(int(time.time()))
@@ -72,7 +89,7 @@ def train_CTC(batch_size=32, nb_type=3):
     #                     (conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=1280, nb_epoch=160,
-                        callbacks=[EarlyStopping(patience=10), evaluator],
+                        callbacks=[evaluator],
                         nb_worker=28,
                         validation_data=
                         image_generactor.generate_true_test_captcha
@@ -387,7 +404,7 @@ def test_JD_CTC():
     import h5py
     from tqdm import tqdm
 
-    model = load_model("models/model_CTC_base_model_1530353300.h5")
+    model = load_model("models/model_CTC_base_model_1530503600.h5")
 
     # print(model.get_config())
     NUMBER = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -397,7 +414,7 @@ def test_JD_CTC():
     CHAR_SET_LEN = len(CHAR_SET)
     CHARACTERS = ''.join(CHAR_SET)
 
-    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_train.h5', 'r')
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
     images = h5f["X"].value
     texts = h5f["Y"].value
     count = 0
@@ -405,16 +422,16 @@ def test_JD_CTC():
     outs = []
     for index, image in enumerate(tqdm(images)):
         _, image = cv2.threshold(image,0.4,1,cv2.THRESH_BINARY)
-        print(image)
-        plt.imshow(image)
+        # print(image)
+        # plt.imshow(image)
         image = np.expand_dims(image, axis=2) 
         image1 = image.transpose(1, 0, 2)
         X_test = np.expand_dims(image1, axis=0)
         y_pred = model.predict(X_test)
         y_pred = y_pred[:,2:,:]
-        out = K.get_value(K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )[0][0])[:, :4]
-        print(''.join([CHARACTERS[x] for x in out[:,:4][0]]))
-        plt.show()
+        # out = K.get_value(K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )[0][0])[:, :4]
+        # print(''.join([CHARACTERS[x] for x in out[:,:4][0]]))
+        # plt.show()
 
         out = K.ctc_decode(y_pred, input_length=np.ones(y_pred.shape[0])*y_pred.shape[1], )
         outs.append(out[0][0])
