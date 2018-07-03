@@ -71,7 +71,7 @@ class Evaluate(Callback):
     def on_epoch_end(self, epoch, logs=None):
         print("calculating accuracy")
         acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
-        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, 1280)*100
+        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, 512)*100
         self.accs.append(acc)
         self.accs.append(acc_test)
         print()
