@@ -205,7 +205,7 @@ def generator_4_multiple_types(batch_size=32, nb_type=6):
         yield X, y
 
 @threadsafe_generator
-def generate_true_test_captcha(batch_size=128):
+def generate_true_test_captcha_simple(batch_size=128):
     X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
     y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
     h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
