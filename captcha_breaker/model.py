@@ -6,7 +6,7 @@ from keras import regularizers
 
 def simple():
     input_tensor = Input((setting.HEIGHT, setting.WIDTH, 1))
-    x = input_tensor
+    x = BatchNormalization()(input_tensor)
     x = noise.GaussianNoise(10)(x)
     for i in range(2):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
