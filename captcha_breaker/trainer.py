@@ -4,6 +4,7 @@ from captcha_breaker import image_generactor
 import time
 from keras import backend as K
 import numpy as np
+from tqdm import tqdm
 
 def train(batch_size=32, nb_type=3):
     now = str(int(time.time()))
@@ -20,10 +21,10 @@ def train(batch_size=32, nb_type=3):
 
 from keras.callbacks import *
 
-def evaluate_training(base_model, conv_shape, batch_num=1280, nb_type=6):
+def evaluate_training(base_model, conv_shape, batch_num=128, nb_type=6):
     batch_acc = 0
     generator = image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_num, nb_type=nb_type)
-    for i in range(batch_num):
+    for i in tqdm(range(batch_num)):
         # print(i)
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
@@ -36,7 +37,7 @@ def evaluate_training(base_model, conv_shape, batch_num=1280, nb_type=6):
 def evaluate_testing(base_model, generator, conv_shape, batch_size=1280):
     batch_acc = 0
     print(batch_size)
-    for i in range(batch_size):
+    for i in tqdm(range(batch_size)):
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
@@ -68,6 +69,7 @@ class Evaluate(Callback):
 
     
     def on_epoch_end(self, epoch, logs=None):
+        print("calculating accuracy")
         acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
         acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, self._batch_size)*100
         self.accs.append(acc)
