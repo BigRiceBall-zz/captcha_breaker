@@ -71,7 +71,7 @@ class Evaluate(Callback):
     def on_epoch_end(self, epoch, logs=None):
         print("calculating accuracy")
         acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
-        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, self._batch_size)*100
+        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, 1280)*100
         self.accs.append(acc)
         self.accs.append(acc_test)
         print()
@@ -92,7 +92,7 @@ def train_CTC(batch_size=32, nb_type=3):
     #                     image_generactor.generator_4_multiple_types_CTC
     #                     (conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=1280, nb_epoch=100,
+                        samples_per_epoch=1280, nb_epoch=160,
                         callbacks=[evaluator],
                         nb_worker=28,
                         validation_data=
