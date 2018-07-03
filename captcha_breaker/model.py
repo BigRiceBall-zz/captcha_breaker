@@ -10,7 +10,7 @@ def simple():
     x = noise.GaussianNoise(10)(x)
     for i in range(2):
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            kernel_regularizer=regularizers.l2(0.001)
+            # kernel_regularizer=regularizers.l2(0.001)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
@@ -18,7 +18,7 @@ def simple():
         # x = noise.GaussianNoise(10)(x)
         x = Dropout(1 - (i + 1) * 0.2)(x)
         x = Convolution2D(32*2**i, (3, 3), activation='relu', 
-            kernel_regularizer=regularizers.l2(0.001)
+            # kernel_regularizer=regularizers.l2(0.001)
             # bias_regularizer=regularizers.l2(0.01),
             # activity_regularizer=regularizers.l2(0.01))(x)
             )(x)
@@ -28,9 +28,12 @@ def simple():
         x = MaxPooling2D((2, 2))(x)
 
     x = Flatten()(x)
-    x = Dropout(0.25)(x)
+    x = Dropout(0.5)(x)
     x = Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = BatchNormalization()(x)
+    x = Dropout(0.4)(x)
     x = Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = BatchNormalization()(x)
     x = [Dense(setting.CHAR_SET_LEN, activation='softmax', name='c%d'%(i+1))(x) for i in range(4)]
     model = Model(input=input_tensor, output=x)
     return model
