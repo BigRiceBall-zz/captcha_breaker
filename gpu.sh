@@ -4,7 +4,7 @@
 #SBATCH --partition gpu
 #SBATCH --job-name=gpujob
 #SBATCH --time=40:00:00
-#SBATCH --mem=16240M
+#SBATCH --mem=26240M
 
 module load libs/tensorflow/1.2
 module load libs/cudnn/8.0-cuda-8.0
