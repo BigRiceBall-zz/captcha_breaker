@@ -33,18 +33,17 @@ def evaluate_training(base_model, conv_shape, batch_num=1280, nb_type=6):
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
-def evaluate_testing(base_model, conv_shape, batch_num=1280, nb_type=6):
+def evaluate_testing(base_model, generator, conv_shape, batch_size=1280):
     batch_acc = 0
-    generator = image_generactor.generate_true_test_captcha(conv_shape, batch_size=batch_num)
-    for i in range(batch_num):
-        # print(i)
+    print(batch_size)
+    for i in range(batch_size):
         [X_test, y_test, _, _], _  = next(generator)
         y_pred = base_model.predict(X_test)
         shape = y_pred[:,2:,:].shape
         out = K.get_value(K.ctc_decode(y_pred[:,2:,:], input_length=np.ones(shape[0])*shape[1])[0][0])[:, :4]
         if out.shape[1] == 4:
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
-    return batch_acc / batch_num
+    return batch_acc / batch_size
     
 # def evaluate_training(base_model, batch_num=10):
 #     batch_acc = 0
@@ -59,21 +58,23 @@ def evaluate_testing(base_model, conv_shape, batch_num=1280, nb_type=6):
 #     return batch_acc / batch_num
 
 class Evaluate(Callback):
-    def __init__(self, base_model, conv_shape, batch_num=10, nb_type=6):
+    def __init__(self, base_model, conv_shape, batch_size=1280, nb_type=6):
         self.accs = []
         self._base_model = base_model
         self._conv_shape = conv_shape
-        self._batch_size = 1280
+        self._batch_size = batch_size
         self._nb_type = 6
+        self._test_generator = image_generactor.generate_true_test_captcha(conv_shape, batch_size=1)
+
     
     def on_epoch_end(self, epoch, logs=None):
         acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
-        acc_test = evaluate_testing(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
+        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, self._batch_size)*100
         self.accs.append(acc)
         self.accs.append(acc_test)
         print()
-        print('training acc: %f%%'%acc)
-        print('testing acc: %f%%'%acc_test)
+        print(str(epoch) + ' training acc: %f%%'%acc)
+        print(str(epoch) + 'testing acc: %f%%'%acc_test)
 
 def train_CTC(batch_size=32, nb_type=3):
     now = str(int(time.time()))
