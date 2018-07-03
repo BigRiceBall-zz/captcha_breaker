@@ -34,7 +34,7 @@ def evaluate_training(base_model, conv_shape, batch_num=128, nb_type=6):
             batch_acc += ((y_test == out).sum(axis=1) == 4).mean()
     return batch_acc / batch_num
 
-def evaluate_testing(base_model, generator, conv_shape, batch_size=1280):
+def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
     batch_acc = 0
     print(batch_size)
     for i in tqdm(range(batch_size)):
@@ -59,7 +59,7 @@ def evaluate_testing(base_model, generator, conv_shape, batch_size=1280):
 #     return batch_acc / batch_num
 
 class Evaluate(Callback):
-    def __init__(self, base_model, conv_shape, batch_size=1280, nb_type=6):
+    def __init__(self, base_model, conv_shape, batch_size=128, nb_type=6):
         self.accs = []
         self._base_model = base_model
         self._conv_shape = conv_shape
@@ -91,12 +91,12 @@ def train_CTC(batch_size=32, nb_type=3):
     #                     image_generactor.generator_4_multiple_types_CTC
     #                     (conv_shape, batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
     model.fit_generator(image_generactor.generator_4_multiple_types_CTC(conv_shape, batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=1280, nb_epoch=160,
+                        samples_per_epoch=1280, nb_epoch=100,
                         callbacks=[evaluator],
                         nb_worker=28,
                         validation_data=
                         image_generactor.generate_true_test_captcha
-                        (conv_shape, batch_size=batch_size), nb_val_samples=1280)
+                        (conv_shape, batch_size=batch_size), nb_val_samples=128)
 
     model.save("models/model_CTC_" + now + ".h5")
     base_model.save("models/model_CTC_base_model_" + now + ".h5")
