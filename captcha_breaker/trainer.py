@@ -59,7 +59,7 @@ def evaluate_testing(base_model, generator, conv_shape, batch_size=128):
 #     return batch_acc / batch_num
 
 class Evaluate(Callback):
-    def __init__(self, base_model, conv_shape, batch_size=128, nb_type=6):
+    def __init__(self, base_model, conv_shape, batch_size=256, nb_type=6):
         self.accs = []
         self._base_model = base_model
         self._conv_shape = conv_shape
@@ -75,8 +75,9 @@ class Evaluate(Callback):
         self.accs.append(acc)
         self.accs.append(acc_test)
         print()
-        print(str(epoch) + ' training acc: %f%%'%acc)
-        print(str(epoch) + 'testing acc: %f%%'%acc_test)
+        print("epoch: " + str(epoch) + ', training acc: %f%%'%acc)
+        print("epoch: " + str(epoch) + ', testing acc: %f%%'%acc_test)
+        print()
 
 def train_CTC(batch_size=32, nb_type=3):
     now = str(int(time.time()))
