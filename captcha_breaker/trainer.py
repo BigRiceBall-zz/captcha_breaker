@@ -6,6 +6,8 @@ from keras import backend as K
 import numpy as np
 from tqdm import tqdm
 
+
+
 def train(batch_size=32, nb_type=3):
     now = str(int(time.time()))
     model = model_builder.simple()
@@ -14,9 +16,9 @@ def train(batch_size=32, nb_type=3):
                 metrics=['accuracy'])
                 
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
-                        samples_per_epoch=10240, nb_epoch=5,
+                        samples_per_epoch=1, nb_epoch=160,
                         nb_worker=28,
-                        validation_data=image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), nb_val_samples=1280)
+                        validation_data=image_generactor.generate_true_test_captcha(batch_size=batch_size), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")
 
 from keras.callbacks import *

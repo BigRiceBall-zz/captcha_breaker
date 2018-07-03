@@ -183,7 +183,7 @@ def threadsafe_generator(f):
     return g
 
 @threadsafe_generator
-def generator_4_multiple_types(batch_size=32, nb_type=3):
+def generator_4_multiple_types(batch_size=32, nb_type=6):
     X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
     y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
     generator = ImageCaptcha(width=170, height=80)
@@ -203,7 +203,25 @@ def generator_4_multiple_types(batch_size=32, nb_type=3):
                 y[j][i, :] = 0
                 y[j][i, setting.CHARACTERS.find(ch)] = 1
         yield X, y
-    
+
+@threadsafe_generator
+def generate_true_test_captcha(batch_size=128):
+    X = np.zeros((batch_size, setting.HEIGHT, setting.WIDTH, 1), dtype=np.float32)
+    y = [np.zeros((batch_size, setting.CHAR_SET_LEN), dtype=np.uint8) for i in range(setting.MAX_CAPTCHA)]
+    h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
+    images = h5f["X"].value
+    texts = h5f["Y"].value
+    length = len(images)
+    while True:
+        for i in range(batch_size):
+            p = np.random.randint(0, length)
+            X[i] = images[p]
+            for j, ch in enumerate(texts[p].decode("ascii")):
+                y[j][i, :] = 0
+                y[j][i, setting.CHARACTERS.find(ch)] = 1
+        yield X, y    
+
+
 @threadsafe_generator
 def generator_4_multiple_types_CTC(conv_shape, batch_size=128, nb_type=6):
     X = np.zeros((batch_size, setting.WIDTH, setting.HEIGHT, 1), dtype=np.float32)
