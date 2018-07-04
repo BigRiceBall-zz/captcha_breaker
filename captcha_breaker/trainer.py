@@ -84,8 +84,8 @@ class Evaluate(Callback):
     
     def on_epoch_end(self, epoch, logs=None):
         print("calculating accuracy")
-        acc = evaluate_training(self._base_model, self._conv_shape, self._batch_size, self._nb_type)*100
-        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, 512)*100
+        acc = evaluate_training(self._base_model, self._conv_shape, 64, self._nb_type)*100
+        acc_test = evaluate_testing(self._base_model, self._test_generator, self._conv_shape, 128)*100
         self.accs.append(acc)
         self.accs.append(acc_test)
         print()
@@ -144,7 +144,7 @@ def continue_2_train_CTC(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=128, nb_type=6):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530616042.h5')
+    model = load_model('models/model_1530612402.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=1280, nb_epoch=160,
                         nb_worker=28,

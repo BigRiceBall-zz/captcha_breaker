@@ -25,14 +25,14 @@ def simple():
         x = BatchNormalization()(x)
         # x = noise.GaussianNoise(10)(x)
         x = Dropout(1 - (i + 1) * 0.25)(x)
-        x = MaxPooling2D((2, 2))(x)
+        x = AveragePooling2D((2, 2))(x)
 
     x = Flatten()(x)
     x = Dropout(0.5)(x)
-    x = Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.1))(x)
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
-    x = Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+    x = Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.1))(x)
     x = BatchNormalization()(x)
     x = [Dense(setting.CHAR_SET_LEN, activation='softmax', name='c%d'%(i+1))(x) for i in range(4)]
     model = Model(input=input_tensor, output=x)
@@ -53,13 +53,13 @@ def CTC():
     input_tensor = Input((setting.WIDTH, setting.HEIGHT, 1))
     x = input_tensor
     for i in range(1):
-        x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+        x = Convolution2D(32, (3, 3), activation='relu')(x)
         x = BatchNormalization()(x)
         x = Dropout(0.6 - 0.1 * i)(x)
-        x = Convolution2D(32, (3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01))(x)
+        x = Convolution2D(32, (3, 3), activation='relu')(x)
         x = BatchNormalization()(x)
         x = Dropout(0.5 - 0.1 * i)(x)
-        x = MaxPooling2D(pool_size=(2, 2))(x)
+        x = AveragePooling2D(pool_size=(2, 2))(x)
         x = BatchNormalization()(x)
 
     conv_shape = x.get_shape()
@@ -69,20 +69,20 @@ def CTC():
     x = BatchNormalization()(x)
     x = Dropout(0.4)(x)
 
-    gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru1')(x)
+    gru_1 = GRU(rnn_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5, kernel_initializer='he_normal', name='gru1')(x)
     gru_1 = BatchNormalization()(gru_1)
 
-    gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(x)
+    gru_1b = GRU(rnn_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5, go_backwards=True, kernel_initializer='he_normal', name='gru1_b')(x)
     gru_1b = BatchNormalization()(gru_1b)
     # print(123)
     gru1_merged = add([gru_1, gru_1b])
     gru1_merged = BatchNormalization()(gru1_merged)
 
     # print(456)
-    gru_2 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged)
+    gru_2 = GRU(rnn_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5, kernel_initializer='he_normal', name='gru2')(gru1_merged)
     gru_2 = BatchNormalization()(gru_2)
 
-    gru_2b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
+    gru_2b = GRU(rnn_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5, go_backwards=True, kernel_initializer='he_normal', name='gru2_b')(gru1_merged)
     x = concatenate([gru_2, gru_2b])
     x = BatchNormalization()(x)
     x = Dropout(0.25)(x)
