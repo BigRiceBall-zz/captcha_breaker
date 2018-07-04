@@ -1,7 +1,7 @@
 from captcha_breaker import trainer
 # from captcha_breaker import image_generactor
 
-# trainer.train_CTC(batch_size=128, nb_type=6)
+trainer.train_CTC(batch_size=128, nb_type=6)
 
 # trainer.test_CTC()
 # trainer.predict_JD_CTC()
@@ -9,7 +9,7 @@ from captcha_breaker import trainer
 # trainer.continue_2_train_CTC(batch_size=128, nb_type=6)
 
 # trainer.train(batch_size=128, nb_type=6)
-trainer.continue_2_train(batch_size=128, nb_type=8)
+# trainer.continue_2_train(batch_size=128, nb_type=8)
 
 # trainer.predict()
 # trainer.continue_2_train(batch_size=128, nb_type=6)
