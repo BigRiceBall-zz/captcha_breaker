@@ -144,7 +144,7 @@ def continue_2_train_CTC(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=128, nb_type=6):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530670752.h5')
+    model = load_model('models/model_1530672838.h5')
     model.compile(loss='categorical_crossentropy',
                 optimizer='adam',
                 metrics=['accuracy'])

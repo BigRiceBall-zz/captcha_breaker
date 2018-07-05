@@ -9,7 +9,7 @@ from captcha_breaker import trainer
 # trainer.continue_2_train_CTC(batch_size=128, nb_type=6)
 
 # trainer.train(batch_size=128, nb_type=6)
-trainer.continue_2_train(batch_size=128, nb_type=8)
+trainer.continue_2_train(batch_size=128, nb_type=6)
 
 # trainer.predict()
 # trainer.continue_2_train(batch_size=128, nb_type=6)
@@ -51,3 +51,5 @@ trainer.continue_2_train(batch_size=128, nb_type=8)
 
 # 1: average 6 types
 # 2: continue_to_train 8 types
+# 3: continue_to_train 8 types
+# 4: average 6 types
