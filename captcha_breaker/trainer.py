@@ -144,7 +144,7 @@ def continue_2_train_CTC(batch_size=32, nb_type=3):
 def continue_2_train(batch_size=128, nb_type=6):
     from keras.models import load_model
     now = str(int(time.time()))
-    model = load_model('models/model_1530672838.h5')
+    model = load_model('models/model_1530670752.h5')
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=1280, nb_epoch=320,
                         nb_worker=28,
@@ -156,7 +156,7 @@ def continue_2_train(batch_size=128, nb_type=6):
 def test():
     import matplotlib.pyplot as plt
     from keras.models import load_model
-    model = load_model('models/model_1530672838.h5')
+    model = load_model('models/model_1530670752.h5')
     # model.summary()
     generator = image_generactor.generator_4_multiple_types(batch_size=1, nb_type=6)
     X, y = next(generator)
@@ -177,7 +177,7 @@ def test_JD():
     import os
     import h5py
     from tqdm import tqdm
-    model = load_model('models/model_1530163862.h5')
+    model = load_model('models/model_1530670752.h5')
     now = time.time()
     h5f = h5py.File('images/jd/captcha/origin_jd_captcha_test.h5', 'r')
     images = h5f["X"].value
