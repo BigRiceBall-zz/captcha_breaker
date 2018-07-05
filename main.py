@@ -48,3 +48,6 @@ trainer.continue_2_train(batch_size=128, nb_type=8)
 # 3: continue_to_train 8 types
 # 4: ctc 6 types
 # 5: normal, average 6 types
+
+# 1: average 6 types
+# 2: continue_to_train 8 types

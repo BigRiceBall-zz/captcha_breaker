@@ -145,6 +145,9 @@ def continue_2_train(batch_size=128, nb_type=6):
     from keras.models import load_model
     now = str(int(time.time()))
     model = load_model('models/model_1530670752.h5')
+    model.compile(loss='categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'])
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=1280, nb_epoch=320,
                         nb_worker=28,
