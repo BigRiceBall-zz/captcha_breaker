@@ -8,8 +8,8 @@ from captcha_breaker import trainer
 # trainer.test_JD_CTC()
 # trainer.continue_2_train_CTC(batch_size=128, nb_type=6)
 
-trainer.train(batch_size=128, nb_type=6)
-# trainer.continue_2_train(batch_size=128, nb_type=8)
+# trainer.train(batch_size=128, nb_type=6)
+trainer.continue_2_train(batch_size=128, nb_type=6)
 
 # trainer.predict()
 # trainer.continue_2_train(batch_size=128, nb_type=6)
@@ -43,3 +43,8 @@ trainer.train(batch_size=128, nb_type=6)
 
 # ocr.parse_images_to_text()
 
+# 1: normal, 8 types
+# 2: continue_to_train 6 types
+# 3: continue_to_train 8 types
+# 4: ctc 6 types
+# 5: normal, average 6 types
