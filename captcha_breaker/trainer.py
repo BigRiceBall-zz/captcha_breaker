@@ -5,6 +5,8 @@ import time
 from keras import backend as K
 import numpy as np
 from tqdm import tqdm
+from keras.callbacks import ReduceLROnPlateau
+
 
 
 
@@ -141,6 +143,7 @@ def continue_2_train_CTC(batch_size=32, nb_type=3):
     model.save("models/model_CTC_" + now + ".h5")
     base_model.save("models/model_CTC_base_model_" + now + ".h5")
 
+
 def continue_2_train(batch_size=128, nb_type=6):
     from keras.models import load_model
     now = str(int(time.time()))
@@ -152,6 +155,7 @@ def continue_2_train(batch_size=128, nb_type=6):
     model.summary()
     model.fit_generator(image_generactor.generator_4_multiple_types(batch_size=batch_size, nb_type=nb_type), 
                         samples_per_epoch=1280, nb_epoch=320,
+                        callbacks=[ReduceLROnPlateau(monitor="loss", factor=0.5, patience=5, verbose=1)]
                         nb_worker=28,
                         validation_data=image_generactor.generate_true_test_captcha_simple(batch_size=batch_size), nb_val_samples=1280)
     model.save("models/model_" + now + ".h5")

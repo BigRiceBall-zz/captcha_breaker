@@ -55,3 +55,9 @@ trainer.continue_2_train(batch_size=128, nb_type=6)
 # 4: average 6 types change optimizer adam
 
 # 2: continue_to_train 8 types
+
+
+
+# 3: continue_to_train 8 types change optimizer sgd
+# 4: average 6 types change optimizer sgd
+
