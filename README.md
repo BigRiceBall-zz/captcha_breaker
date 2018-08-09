@@ -19,8 +19,6 @@ After training, you can simply run ```python -m predict -mp MODEL_PATH -imp IMAG
 
 # Usage
 ```
-```
-```
 usage: main.py [-h] [-ht HEIGHT] [-wh WIDTH] [-cl CAPTCHA_LENGTH]
                [-cal CAPTCHA_ALPHABET] [-b BATCH_SIZE] [-m MODE] [-ep EPOCHS]
                [-mp MODEL_PATH] [-imp IMAGE_PATH]
