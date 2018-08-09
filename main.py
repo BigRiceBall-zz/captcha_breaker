@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument("-mp", "--model", dest="model_path", default="model/model_1533799477.h5",
                         help="model path")
     parser.add_argument("-imp", "--image", dest="image_path", required=False,
-                        help="model path")
+                        help="image path")
     args = parser.parse_args()
     
     if args.mode == "train":
