@@ -1,63 +1,58 @@
-from captcha_breaker import trainer
-# from captcha_breaker import image_generactor
+from breaker import trainer
+from breaker import dataset
+from argparse import ArgumentParser
+from keras.models import load_model
+import cv2
+from skimage.transform import resize
+import numpy as np
 
-# trainer.train_CTC(batch_size=128, nb_type=6)
+def train(height, width, captcha_length, captcha_alphabet, batch_size=128, epochs=10):
+    trainer.train(height, width, captcha_length, captcha_alphabet, batch_size=batch_size, epochs=epochs)
 
-# trainer.test_CTC()
-# trainer.predict_JD_CTC()
-# trainer.test_JD_CTC()
-# trainer.continue_2_train_CTC(batch_size=128, nb_type=6)
+def build_dataset(height, width, captcha_length):
+    dataset.build(height, width, captcha_length)
 
-# trainer.train(batch_size=128, nb_type=6)
-trainer.continue_2_train(batch_size=128, nb_type=6)
+def predict(height, width, captcha_length, captcha_alphabet, path, model_path):
+    model = load_model(model_path)
+    image = resize(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY), (height, width))
+    image = np.expand_dims(image, axis=2)
+    image = np.expand_dims(image, axis=0)
+    data = model.predict(image)
+    predicted_text = []
+    for idx in range(captcha_length):
+        predicted_text.append(captcha_alphabet[np.argmax(np.array(data[:, idx*len(captcha_alphabet):(idx+1)*len(captcha_alphabet)]))])
+    predicted_text = "".join(predicted_text)
+    return predicted_text
 
-# trainer.predict()
-# trainer.continue_2_train(batch_size=128, nb_type=6)
-# trainer.test2()
-# trainer.test()
-# def move():
-# import os
-# import shutil
-# images = os.listdir("images/jd/captcha/jd/")
-# print(len(images))
-# count = 0
-# for image in images:
-#     if (image[0:3] == "tmp"):
-#         shutil.move("images/jd/captcha/jd/" + image, "images/jd/captcha/jd/unknown/"+ image)
-#         count+=1
-#     print(float(count/len(images)))
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("-ht", "--height", dest="height", required=False, default=36,
+                        help="image height")
+    parser.add_argument("-wh", "--width", dest="width", required=False, default=150,
+                        help="image width")
+    parser.add_argument("-cl", "--captchalength", dest="captcha_length", required=False, default=4,
+                        help="the number of character in image")
+    parser.add_argument("-cal", "--alphabetlength", dest="captcha_alphabet", required=False, default="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                        help="the number of character in image")
+    parser.add_argument("-b", "--batchsize", dest="batch_size", required=False, default=128,
+                        help="batch size")
+    parser.add_argument("-m", "--mode", dest="mode", default="train",
+                        help="train or predict or dataset_builder")
+    parser.add_argument("-ep", "--epochs", dest="epochs", default=50,
+                        help="the number of iteration")
+    parser.add_argument("-mp", "--model", dest="model_path", default="model/model_1533799477.h5",
+                        help="model path")
+    parser.add_argument("-imp", "--image", dest="image_path", required=False,
+                        help="model path")
+    args = parser.parse_args()
+    
+    if args.mode == "train":
+        train(args.height, args.width, args.captcha_length, args.captcha_alphabet, args.batch_size, args.epochs)
+    elif args.mode == "dataset_builder":
+        build_dataset(args.height, args.width, args.captcha_length)
+    elif args.mode == "predict":
+        if args.image_path == None:
+            parser.error("The 'predict mode' requires the -imp (image path)")
+        print(predict(args.height, args.width, args.captcha_length, args.captcha_alphabet, args.image_path, args.model_path))
 
-# trainer.predict_jd()
-
-# from captcha_breaker import image_generactor
-# image_generactor.true_image2H5()
-
-# import h5py
-# h5file = h5py.File('images/jd/captcha/origin_jd_captcha.h5', 'r')
-# print(h5file['Y'])
-# print(h5file['Y'].value[0].decode("ascii"))
-# trainer.test_JD()
-
-
-# from captcha_breaker import ocr
-
-# ocr.parse_images_to_text()
-
-# 1: normal, 8 types
-# 2: continue_to_train 6 types
-# 3: continue_to_train 8 types
-# 4: ctc 6 types
-# 5: normal, average 6 types
-
-# 1: average 6 types
-# 2: continue_to_train 8 types
-# 3: continue_to_train 8 types change optimizer adam
-# 4: average 6 types change optimizer adam
-
-# 2: continue_to_train 8 types
-
-
-
-# 3: continue_to_train 8 types change optimizer sgd
-# 4: average 6 types change optimizer sgd
 
