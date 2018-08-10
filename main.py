@@ -45,7 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("-imp", "--image", dest="image_path", required=False,
                         help="image path")
     args = parser.parse_args()
-    
+
     if args.mode == "train":
         train(args.height, args.width, args.captcha_length, args.captcha_alphabet, args.batch_size, args.epochs)
     elif args.mode == "dataset_builder":

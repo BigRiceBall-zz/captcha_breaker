@@ -8,7 +8,7 @@ I recommand you to create a virtualenv to install packages locally.
 pip install -r requirements.txt
 ```
 # Data Preparation
-Put images to images/, and run ```python -m dataset_builder``` it will automatically create ```.npy``` file to images/all/.
+Put images to images/, and name each image with label (e.g. A123.jpg or BAZ12.jpg). run ```python -m dataset_builder``` it will automatically create ```.npy``` file to images/all/.
 
 # Train the model
 After data preparation, you can simply run ```python -m train```.
